@@ -16,6 +16,7 @@ export default defineConfig({
     {
       name: "helpers",
       entry: ["src/helpers.ts"],
+      tsconfig: "tsconfig.helpers.json",
       format: "cjs",
       fixedExtension: false,
       deps: { alwaysBundle: [/.*/], onlyBundle: false, onlyImport: [] },
