@@ -20,7 +20,10 @@ function bundledPath() {
   const local = join(__dirname, "../binding/bin");
   if (existsSync(join(local, platform === "win32" ? "pdfinfo.exe" : "pdfinfo"))) return local;
   try {
-    return join(dirname(require.resolve(`napi-poppler-${suffix}/package.json`)), "bin");
+    return join(
+      dirname(require.resolve(`@leonsilicon/napi-poppler-${suffix}/package.json`)),
+      "bin",
+    );
   } catch {
     throw new Error(
       "Bundled Poppler utilities are missing. Build the native dependencies with vp run build:deps and vp run build, or install with npm optional dependencies enabled.",

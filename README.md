@@ -1,4 +1,4 @@
-# napi-poppler
+# @leonsilicon/napi-poppler
 
 Node-API package with the public API of
 [node-poppler 11.0.0](https://www.npmjs.com/package/node-poppler), built with
@@ -10,11 +10,11 @@ Rust, compiler, or installation scripts are required.
 Poppler encoding data is included for CJK PDFs and legacy encodings.
 
 ```sh
-npm install napi-poppler
+npm install @leonsilicon/napi-poppler
 ```
 
 ```ts
-import { Poppler } from "napi-poppler";
+import { Poppler } from "@leonsilicon/napi-poppler";
 
 const poppler = new Poppler();
 const text = await poppler.pdfToText("document.pdf", undefined, {
@@ -29,12 +29,12 @@ await poppler.pdfToCairo("document.pdf", "page", {
 });
 ```
 
-CommonJS: `const { Poppler } = require("napi-poppler")`. Both entry points
+CommonJS: `const { Poppler } = require("@leonsilicon/napi-poppler")`. Both entry points
 export `Poppler` and `default`, plus the same option types as node-poppler.
 
 ## Compatibility
 
-Replace imports of `node-poppler` with `napi-poppler`. The constructor,
+Replace imports of `node-poppler` with `@leonsilicon/napi-poppler`. The constructor,
 `path` getter, argument order, option names and types, promise results,
 option-version checks, errors, and `extras.signal` cancellation follow
 node-poppler 11.0.0. All twelve methods are included:
@@ -83,13 +83,13 @@ JavaScript helpers are bundled, with no JavaScript runtime dependencies.
 
 ## Platforms
 
-| Platform    | Architecture | Optional package               |
-| ----------- | ------------ | ------------------------------ |
-| macOS       | ARM64        | `napi-poppler-darwin-arm64`    |
-| macOS       | x64          | `napi-poppler-darwin-x64`      |
-| Linux glibc | ARM64        | `napi-poppler-linux-arm64-gnu` |
-| Linux glibc | x64          | `napi-poppler-linux-x64-gnu`   |
-| Windows     | x64          | `napi-poppler-win32-x64-msvc`  |
+| Platform    | Architecture | Optional package                            |
+| ----------- | ------------ | ------------------------------------------- |
+| macOS       | ARM64        | `@leonsilicon/napi-poppler-darwin-arm64`    |
+| macOS       | x64          | `@leonsilicon/napi-poppler-darwin-x64`      |
+| Linux glibc | ARM64        | `@leonsilicon/napi-poppler-linux-arm64-gnu` |
+| Linux glibc | x64          | `@leonsilicon/napi-poppler-linux-x64-gnu`   |
+| Windows     | x64          | `@leonsilicon/napi-poppler-win32-x64-msvc`  |
 
 GitHub Actions builds and tests each target natively. Linux uses the standard
 system C/C++ runtime (Ubuntu 22.04 for x64, Ubuntu 24.04 for ARM64); Windows

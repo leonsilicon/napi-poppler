@@ -53,7 +53,8 @@ jobs:
         id: native-cache
         with:
           path: .native/cache
-          key: poppler-${{ matrix.os }}-${{ hashFiles('vcpkg*.json', 'native/ports/**') }}
+          key: poppler-${{ matrix.os }}-${{ hashFiles('vcpkg*.json', 'native/ports/**') }}-${{ github.run_id }}
+          restore-keys: poppler-${{ matrix.os }}-
       - name: Linux build prerequisites
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y autoconf autoconf-archive automake libtool pkg-config ninja-build
@@ -63,10 +64,10 @@ jobs:
       - name: Build pinned Poppler and static dependencies
         run: vp run build:deps
       - uses: actions/cache/save@v4
-        if: steps.native-cache.outputs.cache-hit != 'true'
+        if: always() && steps.native-cache.outputs.cache-hit != 'true'
         with:
           path: .native/cache
-          key: poppler-${{ matrix.os }}-${{ hashFiles('vcpkg*.json', 'native/ports/**') }}
+          key: poppler-${{ matrix.os }}-${{ hashFiles('vcpkg*.json', 'native/ports/**') }}-${{ github.run_id }}
       - name: Build napi-rs addon and TypeScript facade
         run: vp run build
       - run: cargo fmt --check

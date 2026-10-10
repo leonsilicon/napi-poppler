@@ -1,0 +1,21 @@
+diff --git a/cmake/modules/FindCairo.cmake b/cmake/modules/FindCairo.cmake
+--- a/cmake/modules/FindCairo.cmake
++++ b/cmake/modules/FindCairo.cmake
+@@ -44,6 +44,17 @@ if(CAIRO_FOUND)
+   )
+   set(CAIRO_LIBRARIES "${CAIRO_LIBRARY}")
+ 
++  # Static Cairo also needs Pixman, font/image codecs, and platform libraries.
++  # An imported pkg-config target preserves the whole closure and link flags.
++  if(NOT BUILD_SHARED_LIBS)
++    find_package(PkgConfig REQUIRED)
++    set(_cairo_saved_pkg_config_args "${PKG_CONFIG_ARGN}")
++    list(APPEND PKG_CONFIG_ARGN "--static")
++    pkg_check_modules(_cairo_static REQUIRED IMPORTED_TARGET cairo)
++    set(PKG_CONFIG_ARGN "${_cairo_saved_pkg_config_args}")
++    set(CAIRO_LIBRARIES PkgConfig::_cairo_static)
++  endif()
++
+   find_path(CAIRO_INCLUDE_DIR cairo.h
+             HINTS ${_pc_cairo_INCLUDE_DIRS}
+             PATH_SUFFIXES cairo

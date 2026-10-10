@@ -30,7 +30,7 @@ try {
     ["install", "--ignore-scripts", "--no-audit", "--no-fund", rootPackage, platformPackage],
     directory,
   );
-  const installed = resolve(directory, "node_modules/napi-poppler");
+  const installed = resolve(directory, "node_modules/@leonsilicon/napi-poppler");
   assert.deepEqual(
     JSON.parse(readFileSync(resolve(installed, "package.json"), "utf8")).dependencies ?? {},
     {},
@@ -43,7 +43,7 @@ try {
   };
   runUpstreamTests(installed, env);
   const fixture = resolve(root, "tests/upstream/fixtures/pdf_1.3_NHS_Constitution.pdf");
-  const consumer = `import Poppler, { type PdfToTextOptions, type PopplerExtraOptions } from "napi-poppler";
+  const consumer = `import Poppler, { type PdfToTextOptions, type PopplerExtraOptions } from "@leonsilicon/napi-poppler";
     const poppler: Poppler = new Poppler();
     const options: PdfToTextOptions = { maintainLayout: true, removeHyphens: "soft" };
     const extras: PopplerExtraOptions = { signal: new AbortController().signal };
@@ -87,7 +87,7 @@ try {
   );
   for (const esm of [true, false]) {
     // No PATH means neither system Poppler nor build tools can be discovered.
-    const code = `${esm ? 'import Poppler, { Poppler as Named } from "napi-poppler";' : 'const { default: Poppler, Poppler: Named } = require("napi-poppler");'}
+    const code = `${esm ? 'import Poppler, { Poppler as Named } from "@leonsilicon/napi-poppler";' : 'const { default: Poppler, Poppler: Named } = require("@leonsilicon/napi-poppler");'}
       if (Poppler !== Named) throw Error("Mismatched exports");
       const poppler = new Poppler();
       poppler.pdfInfo(${JSON.stringify(fixture)}, { printAsJson: true }).then(info => {

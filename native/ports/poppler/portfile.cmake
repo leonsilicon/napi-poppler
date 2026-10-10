@@ -10,6 +10,7 @@ vcpkg_from_gitlab(
         export-unofficial-poppler.patch
         private-namespace.patch
         relocatable-data.patch
+        static-cairo.patch
 )
 
 set(POPPLER_PC_REQUIRES "freetype2 libjpeg libopenjp2 libpng libtiff-4 poppler-vcpkg-iconv")
