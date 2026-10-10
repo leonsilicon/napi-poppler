@@ -11,6 +11,11 @@
       "host": true,
       "platform": "windows"
     },
-    "poppler-data"
+    "poppler-data",
+    {
+      "name": "cairo",
+      "default-features": false,
+      "features": ["gobject"]
+    }
   ]
 }
