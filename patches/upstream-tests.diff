@@ -18,13 +18,11 @@
  
  // Cache immutable regex as they are expensive to create and garbage collect
  const CMD_FAILED_REG = /^Command failed:/u;
-@@ -42,8 +42,8 @@
- ];
+@@ -43,7 +43,7 @@
  const file = `${testDirectory}pdf_1.3_NHS_Constitution.pdf`;
  
--/** @type {typeof import("node:child_process")} */
+ /** @type {typeof import("node:child_process")} */
 -const originalChildProcess = jest.requireActual("node:child_process");
-+/** @type {typeof import("../src/process.cjs")} */
 +const originalChildProcess = jest.requireActual("../src/process.cjs");
  /** @type {typeof import("node:process")} */
  const originalProcess = jest.requireActual("node:process");
@@ -49,7 +47,7 @@
  
  			expect.assertions(1);
  			try {
-@@ -486,11 +486,11 @@
+@@ -486,7 +486,7 @@
  		])(
  			"Lists info as a JSON object when $testName",
  			async ({ stdout, expected }) => {
@@ -58,11 +56,6 @@
  					...originalChildProcess,
  					spawn: jest.fn(() => {
  						const emitter =
--							/** @type {import("node:child_process").ChildProcess} */ (
-+							/** @type {import("../src/process.cjs").ChildProcess} */ (
- 								new EventEmitter()
- 							);
- 						emitter.stdout = Readable.from([stdout]);
 @@ -505,8 +505,8 @@
  						return emitter;
  					}),
@@ -74,7 +67,7 @@
  				const popplerMock = new PopplerMock(testBinaryPath);
  
  				const res = await popplerMock.pdfInfo(file, {
-@@ -585,11 +585,11 @@
+@@ -585,7 +585,7 @@
  		it.each(childProcessCloseTests)(
  			"Rejects with an Error object if Poppler exits with $testName",
  			async ({ exitCode, expectedError }) => {
@@ -83,11 +76,6 @@
  					...originalChildProcess,
  					spawn: jest.fn(() => {
  						const emitter =
--							/** @type {import("node:child_process").ChildProcess} */ (
-+							/** @type {import("../src/process.cjs").ChildProcess} */ (
- 								new EventEmitter()
- 							);
- 						emitter.stdout = new Readable({
 @@ -606,8 +606,8 @@
  						return emitter;
  					}),
@@ -99,7 +87,7 @@
  				const popplerMock = new PopplerMock(testBinaryPath);
  
  				await expect(popplerMock.pdfInfo(file)).rejects.toThrow(
-@@ -1485,11 +1485,11 @@
+@@ -1485,7 +1485,7 @@
  		])(
  			"Correctly decodes stdout when $testName",
  			async ({ chunks, expected }) => {
@@ -108,11 +96,6 @@
  					...originalChildProcess,
  					spawn: jest.fn(() => {
  						const emitter =
--							/** @type {import("node:child_process").ChildProcess} */ (
-+							/** @type {import("../src/process.cjs").ChildProcess} */ (
- 								new EventEmitter()
- 							);
- 						emitter.stdout = Readable.from(chunks);
 @@ -1504,8 +1504,8 @@
  						return emitter;
  					}),
@@ -124,7 +107,7 @@
  				const popplerMock = new PopplerMock(testBinaryPath);
  
  				const result = await popplerMock.pdfToText(file, undefined, {
-@@ -1564,11 +1564,11 @@
+@@ -1564,7 +1564,7 @@
  		it.each(childProcessCloseTests)(
  			"Rejects with an Error object if Poppler exits with $testName",
  			async ({ exitCode, expectedError }) => {
@@ -133,11 +116,6 @@
  					...originalChildProcess,
  					spawn: jest.fn(() => {
  						const emitter =
--							/** @type {import("node:child_process").ChildProcess} */ (
-+							/** @type {import("../src/process.cjs").ChildProcess} */ (
- 								new EventEmitter()
- 							);
- 						emitter.stdout = new Readable({
 @@ -1585,8 +1585,8 @@
  						return emitter;
  					}),

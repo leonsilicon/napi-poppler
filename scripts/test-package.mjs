@@ -42,6 +42,45 @@ try {
   };
   runUpstreamTests(installed, env);
   const fixture = resolve(root, "tests/upstream/fixtures/pdf_1.3_NHS_Constitution.pdf");
+  const consumer = `import Poppler, { type PdfToTextOptions, type PopplerExtraOptions } from "napi-poppler";
+    const poppler: Poppler = new Poppler();
+    const options: PdfToTextOptions = { maintainLayout: true, removeHyphens: "soft" };
+    const extras: PopplerExtraOptions = { signal: new AbortController().signal };
+    const text: Promise<string> = poppler.pdfToText("input.pdf", undefined, options, extras);
+    const info: Promise<string | Record<string, string>> = poppler.pdfInfo("input.pdf", { printAsJson: true });
+    poppler.pdfAttach("input.pdf", "file.txt", "attached.pdf");
+    poppler.pdfDetach("input.pdf", { listEmbedded: true });
+    poppler.pdfFonts(Buffer.alloc(0));
+    poppler.pdfImages("input.pdf", "image");
+    poppler.pdfSeparate("input.pdf", "page-%d.pdf");
+    poppler.pdfToCairo("input.pdf", undefined, { singleFile: true, pngFile: true });
+    poppler.pdfToHtml(Buffer.alloc(0), "output.html");
+    poppler.pdfToPpm("input.pdf", "image");
+    poppler.pdfToPs("input.pdf");
+    poppler.pdfUnite(["first.pdf", "second.pdf"], "output.pdf");
+    void text; void info;`;
+  const typeFiles = ["consumer.mts", "consumer.cts"].map((name) => {
+    const path = resolve(directory, name);
+    writeFileSync(path, consumer);
+    return path;
+  });
+  execaSync(
+    "vp",
+    [
+      "exec",
+      "tsc",
+      "--noEmit",
+      "--strict",
+      "--module",
+      "nodenext",
+      "--target",
+      "esnext",
+      "--typeRoots",
+      resolve(root, "node_modules/@types"),
+      ...typeFiles,
+    ],
+    { cwd: root, stdio: "inherit" },
+  );
   for (const esm of [true, false]) {
     // No PATH means neither system Poppler nor build tools can be discovered.
     const code = `${esm ? 'import Poppler, { Poppler as Named } from "napi-poppler";' : 'const { default: Poppler, Poppler: Named } = require("napi-poppler");'}

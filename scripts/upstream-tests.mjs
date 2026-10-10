@@ -31,7 +31,10 @@ export function runUpstreamTests(packageRoot = root, env = process.env) {
     patched,
     original
       .replaceAll('"../src/index"', '"../src/index.cjs"')
-      .replaceAll('"node:child_process"', '"../src/process.cjs"'),
+      .replace(
+        /(require|jest\.requireActual|jest\.doMock)\("node:child_process"/gu,
+        '$1("../src/process.cjs"',
+      ),
   );
   const generated = resolve(root, ".upstream-tests");
   rmSync(generated, { recursive: true, force: true });
