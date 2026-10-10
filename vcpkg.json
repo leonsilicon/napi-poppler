@@ -15,7 +15,7 @@
     {
       "name": "cairo",
       "default-features": false,
-      "features": ["gobject"]
+      "features": ["freetype", "gobject"]
     }
   ]
 }
