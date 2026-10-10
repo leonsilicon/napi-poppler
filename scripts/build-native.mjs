@@ -17,7 +17,6 @@ const { task } = await new NapiCli().build({ ...options, cwd: root });
 await task;
 const triplets = {
   "darwin-arm64": "arm64-osx",
-  "darwin-x64": "x64-osx",
   "linux-arm64": "arm64-linux",
   "linux-x64": "x64-linux",
   "win32-x64": "x64-windows-static-md",

@@ -71,7 +71,6 @@
   },
   "optionalDependencies": {
     "@leonsilicon/napi-poppler-darwin-arm64": "0.1.0",
-    "@leonsilicon/napi-poppler-darwin-x64": "0.1.0",
     "@leonsilicon/napi-poppler-linux-arm64-gnu": "0.1.0",
     "@leonsilicon/napi-poppler-linux-x64-gnu": "0.1.0",
     "@leonsilicon/napi-poppler-win32-x64-msvc": "0.1.0"
@@ -81,7 +80,6 @@
     "packageName": "@leonsilicon/napi-poppler",
     "targets": [
       "aarch64-apple-darwin",
-      "x86_64-apple-darwin",
       "aarch64-unknown-linux-gnu",
       "x86_64-unknown-linux-gnu",
       "x86_64-pc-windows-msvc"

@@ -5,7 +5,6 @@ import { root } from "./package-utils.mjs";
 
 export const triplets = {
   "darwin-arm64": "arm64-osx",
-  "darwin-x64": "x64-osx",
   "linux-arm64-gnu": "arm64-linux",
   "linux-x64-gnu": "x64-linux",
   "win32-x64-msvc": "x64-windows-static-md",

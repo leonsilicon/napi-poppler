@@ -17,12 +17,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-14
+          - os: macos-15
+            cache-os: macos-14
             target: aarch64-apple-darwin
             suffix: darwin-arm64
-          - os: macos-15-intel
-            target: x86_64-apple-darwin
-            suffix: darwin-x64
           - os: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
             suffix: linux-x64-gnu
@@ -54,7 +52,9 @@ jobs:
         with:
           path: .native/cache
           key: poppler-${{ matrix.os }}-${{ hashFiles('vcpkg*.json', 'native/ports/**') }}-${{ github.run_id }}
-          restore-keys: poppler-${{ matrix.os }}-
+          restore-keys: |
+            poppler-${{ matrix.os }}-
+            poppler-${{ matrix.cache-os || matrix.os }}-
       - name: Linux build prerequisites
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y autoconf autoconf-archive automake libtool pkg-config ninja-build

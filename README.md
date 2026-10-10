@@ -86,14 +86,13 @@ JavaScript helpers are bundled, with no JavaScript runtime dependencies.
 | Platform    | Architecture | Optional package                            |
 | ----------- | ------------ | ------------------------------------------- |
 | macOS       | ARM64        | `@leonsilicon/napi-poppler-darwin-arm64`    |
-| macOS       | x64          | `@leonsilicon/napi-poppler-darwin-x64`      |
 | Linux glibc | ARM64        | `@leonsilicon/napi-poppler-linux-arm64-gnu` |
 | Linux glibc | x64          | `@leonsilicon/napi-poppler-linux-x64-gnu`   |
 | Windows     | x64          | `@leonsilicon/napi-poppler-win32-x64-msvc`  |
 
 GitHub Actions builds and tests each target natively. Linux uses the standard
 system C/C++ runtime (Ubuntu 22.04 for x64, Ubuntu 24.04 for ARM64); Windows
-uses the standard MSVC runtime. macOS builds target macOS 11+. Musl, Windows
+uses the standard MSVC runtime. macOS builds target macOS 11+ on Apple Silicon. Intel macOS, musl, Windows
 ARM64, 32-bit platforms, and browsers are not configured.
 
 ## Development and validation
@@ -139,7 +138,7 @@ Publishing happens only on a `v<version>` tag matching both package.json and
 Cargo.toml. Platform packages publish before the main package, using npm
 trusted publishing with GitHub OIDC through the `npm` environment.
 
-Before the first automated release, create all six npm packages with an
+Before the first automated release, create all five npm packages with an
 authorized initial publication, then register their trusted publishers:
 
 ```sh

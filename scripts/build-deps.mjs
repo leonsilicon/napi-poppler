@@ -8,7 +8,6 @@ const vcpkgRoot = resolve(root, ".native/vcpkg");
 const revision = "e456309491fd875487bf02b8a0dca76c1b1b00cc";
 const triplets = {
   "darwin-arm64": "arm64-osx",
-  "darwin-x64": "x64-osx",
   "linux-arm64": "arm64-linux",
   "linux-x64": "x64-linux",
   "win32-x64": "x64-windows-static-md",
