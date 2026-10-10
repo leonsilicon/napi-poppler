@@ -1,0 +1,151 @@
+--- a/test/index.test.js
++++ b/test/index.test.js
+@@ -5,7 +5,7 @@
+ "use strict";
+ 
+ const { EventEmitter } = require("node:events");
+-const { execFile, spawnSync } = require("node:child_process");
++const { execFile, spawnSync } = require("../src/process.cjs");
+ // eslint-disable-next-line n/no-unsupported-features/node-builtins -- Tests, not in distributed code
+ const { access, glob, readFile, unlink } = require("node:fs/promises");
+ const { join, normalize, posix, sep } = require("node:path");
+@@ -24,7 +24,7 @@
+ const { lt } = require("semver");
+ 
+ const execFileAsync = promisify(execFile);
+-const { Poppler } = require("../src/index");
++const { Poppler } = require("../src/index.cjs");
+ 
+ // Cache immutable regex as they are expensive to create and garbage collect
+ const CMD_FAILED_REG = /^Command failed:/u;
+@@ -42,8 +42,8 @@
+ ];
+ const file = `${testDirectory}pdf_1.3_NHS_Constitution.pdf`;
+ 
+-/** @type {typeof import("node:child_process")} */
+-const originalChildProcess = jest.requireActual("node:child_process");
++/** @type {typeof import("../src/process.cjs")} */
++const originalChildProcess = jest.requireActual("../src/process.cjs");
+ /** @type {typeof import("node:process")} */
+ const originalProcess = jest.requireActual("node:process");
+ 
+@@ -119,7 +119,7 @@
+ 			}));
+ 			const { platform: mockPlatform } = require("node:process");
+ 
+-			jest.doMock("node:child_process", () => ({
++			jest.doMock("../src/process.cjs", () => ({
+ 				...originalChildProcess,
+ 				spawnSync: jest.fn(() => ({
+ 					stdout: {
+@@ -127,8 +127,8 @@
+ 					},
+ 				})),
+ 			}));
+-			require("node:child_process");
+-			const { Poppler: PopplerMock } = require("../src/index");
++			require("../src/process.cjs");
++			const { Poppler: PopplerMock } = require("../src/index.cjs");
+ 
+ 			expect.assertions(1);
+ 			try {
+@@ -486,11 +486,11 @@
+ 		])(
+ 			"Lists info as a JSON object when $testName",
+ 			async ({ stdout, expected }) => {
+-				jest.doMock("node:child_process", () => ({
++				jest.doMock("../src/process.cjs", () => ({
+ 					...originalChildProcess,
+ 					spawn: jest.fn(() => {
+ 						const emitter =
+-							/** @type {import("node:child_process").ChildProcess} */ (
++							/** @type {import("../src/process.cjs").ChildProcess} */ (
+ 								new EventEmitter()
+ 							);
+ 						emitter.stdout = Readable.from([stdout]);
+@@ -505,8 +505,8 @@
+ 						return emitter;
+ 					}),
+ 				}));
+-				require("node:child_process");
+-				const { Poppler: PopplerMock } = require("../src/index");
++				require("../src/process.cjs");
++				const { Poppler: PopplerMock } = require("../src/index.cjs");
+ 				const popplerMock = new PopplerMock(testBinaryPath);
+ 
+ 				const res = await popplerMock.pdfInfo(file, {
+@@ -585,11 +585,11 @@
+ 		it.each(childProcessCloseTests)(
+ 			"Rejects with an Error object if Poppler exits with $testName",
+ 			async ({ exitCode, expectedError }) => {
+-				jest.doMock("node:child_process", () => ({
++				jest.doMock("../src/process.cjs", () => ({
+ 					...originalChildProcess,
+ 					spawn: jest.fn(() => {
+ 						const emitter =
+-							/** @type {import("node:child_process").ChildProcess} */ (
++							/** @type {import("../src/process.cjs").ChildProcess} */ (
+ 								new EventEmitter()
+ 							);
+ 						emitter.stdout = new Readable({
+@@ -606,8 +606,8 @@
+ 						return emitter;
+ 					}),
+ 				}));
+-				require("node:child_process");
+-				const { Poppler: PopplerMock } = require("../src/index");
++				require("../src/process.cjs");
++				const { Poppler: PopplerMock } = require("../src/index.cjs");
+ 				const popplerMock = new PopplerMock(testBinaryPath);
+ 
+ 				await expect(popplerMock.pdfInfo(file)).rejects.toThrow(
+@@ -1485,11 +1485,11 @@
+ 		])(
+ 			"Correctly decodes stdout when $testName",
+ 			async ({ chunks, expected }) => {
+-				jest.doMock("node:child_process", () => ({
++				jest.doMock("../src/process.cjs", () => ({
+ 					...originalChildProcess,
+ 					spawn: jest.fn(() => {
+ 						const emitter =
+-							/** @type {import("node:child_process").ChildProcess} */ (
++							/** @type {import("../src/process.cjs").ChildProcess} */ (
+ 								new EventEmitter()
+ 							);
+ 						emitter.stdout = Readable.from(chunks);
+@@ -1504,8 +1504,8 @@
+ 						return emitter;
+ 					}),
+ 				}));
+-				require("node:child_process");
+-				const { Poppler: PopplerMock } = require("../src/index");
++				require("../src/process.cjs");
++				const { Poppler: PopplerMock } = require("../src/index.cjs");
+ 				const popplerMock = new PopplerMock(testBinaryPath);
+ 
+ 				const result = await popplerMock.pdfToText(file, undefined, {
+@@ -1564,11 +1564,11 @@
+ 		it.each(childProcessCloseTests)(
+ 			"Rejects with an Error object if Poppler exits with $testName",
+ 			async ({ exitCode, expectedError }) => {
+-				jest.doMock("node:child_process", () => ({
++				jest.doMock("../src/process.cjs", () => ({
+ 					...originalChildProcess,
+ 					spawn: jest.fn(() => {
+ 						const emitter =
+-							/** @type {import("node:child_process").ChildProcess} */ (
++							/** @type {import("../src/process.cjs").ChildProcess} */ (
+ 								new EventEmitter()
+ 							);
+ 						emitter.stdout = new Readable({
+@@ -1585,8 +1585,8 @@
+ 						return emitter;
+ 					}),
+ 				}));
+-				require("node:child_process");
+-				const { Poppler: PopplerMock } = require("../src/index");
++				require("../src/process.cjs");
++				const { Poppler: PopplerMock } = require("../src/index.cjs");
+ 				const popplerMock = new PopplerMock(testBinaryPath);
+ 
+ 				await expect(

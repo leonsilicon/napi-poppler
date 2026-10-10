@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "outDir": ".types",
+    "rootDir": "compat"
+  },
+  "include": ["compat/index.cjs", "compat/options/*.cjs"],
+  "exclude": []
+}

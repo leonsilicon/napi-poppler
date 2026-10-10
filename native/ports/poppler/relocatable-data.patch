@@ -1,0 +1,14 @@
+diff --git a/poppler/GlobalParams.cc b/poppler/GlobalParams.cc
+--- a/poppler/GlobalParams.cc
++++ b/poppler/GlobalParams.cc
+@@ -460,7 +460,9 @@ void GlobalParams::scanEncodingDirs()
+ void GlobalParams::scanEncodingDirs()
+ {
+-    std::string dataRoot = !popplerDataDir.empty() ? popplerDataDir : std::string { POPPLER_DATADIR };
++    // npm packages relocate the data independently of the build prefix.
++    const char *bundledData = std::getenv("NAPI_POPPLER_DATADIR");
++    std::string dataRoot = !popplerDataDir.empty() ? popplerDataDir : std::string { bundledData && *bundledData ? bundledData : POPPLER_DATADIR };
+ 
+     std::error_code ec; // if ec is set, we also get the end iterator, so that's kind of okay.  If not creating with a error code, we get an exception if poppler data is missing
+     for (const auto &entry : std::filesystem::directory_iterator { dataRoot + "/nameToUnicode", ec }) {
+         if (entry.is_regular_file()) {

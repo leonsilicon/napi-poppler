@@ -1,0 +1,16 @@
+{
+  "name": "napi-poppler",
+  "version-string": "0.1.0",
+  "dependencies": [
+    {
+      "name": "poppler",
+      "features": ["glib"]
+    },
+    {
+      "name": "pkgconf",
+      "host": true,
+      "platform": "windows"
+    },
+    "poppler-data"
+  ]
+}

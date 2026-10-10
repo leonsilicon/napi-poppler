@@ -1,0 +1,24 @@
+[package]
+name = "napi-poppler"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/leonsilicon/napi-poppler"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+path = "native/lib.rs"
+
+[dependencies]
+napi = { version = "3", default-features = false, features = ["napi8"] }
+napi-derive = "3"
+poppler = { package = "poppler-rs", version = "=0.26.0", features = ["v20_9"] }
+glib = "0.22"
+
+[build-dependencies]
+napi-build = "2"
+
+[profile.release]
+lto = true
+strip = "symbols"

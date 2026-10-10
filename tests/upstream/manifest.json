@@ -1,0 +1,14 @@
+{
+  "repository": "https://github.com/Fdawgs/node-poppler",
+  "version": "11.0.0",
+  "commit": "43a97d7c5e8cf3c06189fd889989c16bdb9f7e1a",
+  "files": {
+    "LICENSE": "a2d6a90d83775aa4ac9aaebc43d9b57398f38e94d94ea4d73ec47fe4f02bf78d",
+    "fixtures/pdf_1.3_NHS_Constitution.pdf": "97396fc64493aff2066b943b22d6143a9d11c20419d00aae1db78703f9cbaa2c",
+    "fixtures/pdf_1.3_NHS_Constitution_attached_detach.pdf": "4c5d4e648fd2c3d8e61e6ab65e52cb2b5117aa171f9903e94782255fd8dcb0be",
+    "fixtures/pdf_1.7_NHS_Constitution_Handbook.pdf": "62a433dda9aeb21ea7545a625f294be335def65acd98633e58e6cb2c14e4685b",
+    "fixtures/pdf_1.7_whitespace_example.pdf": "809fd8528ffe661b56b8e6bc0f2eb919ae0bbe02499366f0b9e59eb0c040b55c",
+    "fixtures/test.txt": "d2b4e54de5783520f79ccb5fca557ddb1b56ccfdcd243544474b276a857d32cf",
+    "index.test.cjs": "4923126423ae4e4ea1ff35fbe21aff37c1dcc445c839bbec12fd175c845101e7"
+  }
+}

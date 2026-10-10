@@ -1,0 +1,137 @@
+name: Build and publish
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+jobs:
+  build:
+    name: ${{ matrix.target }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            target: aarch64-apple-darwin
+            suffix: darwin-arm64
+          - os: macos-15-intel
+            target: x86_64-apple-darwin
+            suffix: darwin-x64
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            suffix: linux-x64-gnu
+          - os: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+            suffix: linux-arm64-gnu
+          - os: windows-2022
+            target: x86_64-pc-windows-msvc
+            suffix: win32-x64-msvc
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "11.0"
+      VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/.native/cache,readwrite
+    steps:
+      - uses: actions/checkout@v4
+      - uses: voidzero-dev/setup-vp@v1.21.1
+        with:
+          node-version: "24"
+          cache: true
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: ilammy/msvc-dev-cmd@v1
+        if: runner.os == 'Windows'
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/cache/restore@v4
+        id: native-cache
+        with:
+          path: .native/cache
+          key: poppler-${{ matrix.os }}-${{ hashFiles('vcpkg*.json', 'native/ports/**') }}
+      - name: Linux build prerequisites
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y autoconf automake libtool pkg-config ninja-build
+      - name: macOS build prerequisites
+        if: runner.os == 'macOS'
+        run: brew install autoconf automake libtool pkg-config ninja
+      - name: Build pinned Poppler and static dependencies
+        run: vp run build:deps
+      - uses: actions/cache/save@v4
+        if: steps.native-cache.outputs.cache-hit != 'true'
+        with:
+          path: .native/cache
+          key: poppler-${{ matrix.os }}-${{ hashFiles('vcpkg*.json', 'native/ports/**') }}
+      - name: Build napi-rs addon and TypeScript facade
+        run: vp run build
+      - run: cargo fmt --check
+      - run: cargo clippy --release -- -D warnings
+      - run: vp check
+      - run: vp test
+      - name: Run every upstream test with unchanged assertions
+        run: vp run test:upstream
+      - name: Reject dependencies on system Poppler and other native libraries
+        run: node scripts/audit-all.mjs ${{ matrix.suffix }}
+      - name: Prepare optional platform package
+        run: node scripts/stage-platform.mjs ${{ matrix.suffix }}
+      - name: Repeat upstream suite from clean npm installation
+        run: vp run test:package ${{ matrix.suffix }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-${{ matrix.suffix }}
+          path: |
+            binding/napi-poppler.${{ matrix.suffix }}.node
+            binding/index.cjs
+            binding/index.d.cts
+            binding/bin/
+            binding/share/
+            platform-licenses/
+          if-no-files-found: error
+  package:
+    needs: build
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: voidzero-dev/setup-vp@v1.21.1
+        with:
+          node-version: "24"
+          cache: true
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - run: node scripts/assemble-packages.mjs
+      - run: vp exec napi pre-publish --dry-run --root-publisher npm
+      - run: node scripts/pack-release.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: npm-packages
+          include-hidden-files: true
+          path: |
+            release/*.tgz
+            .ci/publish-release.js
+          if-no-files-found: error
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: package
+    runs-on: ubuntu-22.04
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          package-manager-cache: false
+      - run: npm install --global npm@11.21.0
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm-packages
+          path: .
+      - run: node .ci/publish-release.js

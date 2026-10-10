@@ -1,0 +1,100 @@
+{
+  "name": "napi-poppler",
+  "version": "0.1.0",
+  "description": "Async Node-API bindings to Poppler via poppler-rs, with bundled native dependencies",
+  "homepage": "https://github.com/leonsilicon/napi-poppler#readme",
+  "bugs": {
+    "url": "https://github.com/leonsilicon/napi-poppler/issues"
+  },
+  "license": "GPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leonsilicon/napi-poppler.git"
+  },
+  "files": [
+    "dist",
+    "binding/index.cjs",
+    "binding/index.d.cts",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    "compat",
+    "licenses"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepare": "vp config",
+    "build:deps": "node scripts/build-deps.mjs",
+    "build:native": "node scripts/build-native.mjs",
+    "build:js": "vp pack && node scripts/build-types.mjs",
+    "build": "vp run build:native && vp run build:js",
+    "check": "vp check",
+    "test": "vp test",
+    "test:package": "node scripts/test-package.mjs",
+    "prepublishOnly": "vp run build:js",
+    "test:upstream": "node scripts/upstream-tests.mjs",
+    "setup:trusted-publishing": "node scripts/setup-trusted-publishing.mjs",
+    "artifacts": "napi artifacts --output-dir artifacts --npm-dir npm --build-output-dir binding",
+    "npm:dirs": "napi create-npm-dirs"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.4.2",
+    "@napi-rs/cli": "^3.10.8",
+    "@types/node": "^26.1.1",
+    "@types/semver": "^7.8.0",
+    "camelcase": "^6.3.0",
+    "diff": "^9.0.0",
+    "execa": "^10.1.0",
+    "ice-barrage": "^1.0.0",
+    "jest": "^30.4.2",
+    "semver": "^7.8.5",
+    "typescript": "^7.0.2",
+    "vite-plus": "catalog:"
+  },
+  "optionalDependencies": {
+    "napi-poppler-darwin-arm64": "0.1.0",
+    "napi-poppler-darwin-x64": "0.1.0",
+    "napi-poppler-linux-arm64-gnu": "0.1.0",
+    "napi-poppler-linux-x64-gnu": "0.1.0",
+    "napi-poppler-win32-x64-msvc": "0.1.0"
+  },
+  "napi": {
+    "binaryName": "napi-poppler",
+    "packageName": "napi-poppler",
+    "targets": [
+      "aarch64-apple-darwin",
+      "x86_64-apple-darwin",
+      "aarch64-unknown-linux-gnu",
+      "x86_64-unknown-linux-gnu",
+      "x86_64-pc-windows-msvc"
+    ]
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.11.2",
+      "onFail": "warn"
+    }
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

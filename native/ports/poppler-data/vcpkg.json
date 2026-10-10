@@ -1,0 +1,7 @@
+{
+  "name": "poppler-data",
+  "version": "0.4.12",
+  "description": "Encoding and CMap data for Poppler",
+  "homepage": "https://poppler.freedesktop.org/",
+  "license": "GPL-2.0-only AND BSD-3-Clause"
+}
