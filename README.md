@@ -99,9 +99,9 @@ ARM64, 32-bit platforms, and browsers are not configured.
 ## Development and validation
 
 Install Vite+, Rust 1.92+, a C++ compiler, Git, Python 3, and the native build
-prerequisites. Linux: `autoconf automake libtool pkg-config ninja-build`.
+prerequisites. Linux: `autoconf autoconf-archive automake libtool pkg-config ninja-build`.
 macOS: Xcode command-line tools and Homebrew
-`autoconf automake libtool pkg-config ninja`. Windows: Visual Studio C++ tools.
+`autoconf autoconf-archive automake libtool pkg-config ninja`. Windows: Visual Studio C++ tools.
 vcpkg provisions CMake/Meson and pins/checksums the remaining dependencies.
 
 ```sh
