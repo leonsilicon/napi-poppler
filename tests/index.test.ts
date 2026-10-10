@@ -5,11 +5,13 @@ import { createRequire } from "node:module";
 import { afterEach, describe, expect, it } from "vite-plus/test";
 import Poppler, { Poppler as NamedPoppler, type PdfToTextOptions } from "../src/index.ts";
 import { inspectDocument, libraryVersion, NativeProcess } from "../binding/index.cjs";
+import { cjkPdf } from "./fixtures.mjs";
 
 const require = createRequire(import.meta.url);
 const { spawn } = require("../compat/process.cjs");
 const fixture = resolve(import.meta.dirname, "upstream/fixtures/pdf_1.3_NHS_Constitution.pdf");
 const folders: string[] = [];
+
 afterEach(() => {
   for (const folder of folders.splice(0)) rmSync(folder, { recursive: true, force: true });
 });
@@ -103,5 +105,12 @@ describe("native backend and distribution", () => {
     await expect(new Poppler().pdfInfo(path, { printAsJson: true })).resolves.toMatchObject({
       pages: "16",
     });
+  });
+
+  it("decodes CJK PDFs using the packaged encoding data", async () => {
+    await expect(new Poppler().pdfToText(cjkPdf())).resolves.toBe("日本");
+    await expect(
+      new Poppler().pdfToText(fixture, undefined, { listEncodingOptions: true }),
+    ).resolves.toContain("Shift-JIS");
   });
 });

@@ -1,6 +1,14 @@
 diff --git a/poppler/GlobalParams.cc b/poppler/GlobalParams.cc
 --- a/poppler/GlobalParams.cc
 +++ b/poppler/GlobalParams.cc
+@@ -60,6 +60,7 @@
+ 
+ #include <algorithm>
++#include <cstdlib>
+ #include <cstring>
+ #include <cstdio>
+ #include <filesystem>
+ #include <utility>
 @@ -460,7 +460,9 @@ void GlobalParams::scanEncodingDirs()
  void GlobalParams::scanEncodingDirs()
  {

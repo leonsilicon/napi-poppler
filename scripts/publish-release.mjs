@@ -5,6 +5,11 @@ import { npm, root } from "./package-utils.mjs";
 import publisher from "../.github/npm-trusted-publisher.json" with { type: "json" };
 const manifest = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"));
 if (!valid(manifest.version)) throw new Error("Invalid package version");
+const cargoVersion = readFileSync(resolve(root, "Cargo.toml"), "utf8").match(
+  /^version\s*=\s*"([^"]+)"/mu,
+)?.[1];
+if (cargoVersion !== manifest.version)
+  throw new Error("Cargo.toml and package.json versions must match");
 if (process.env.GITHUB_REF_NAME !== `v${manifest.version}`)
   throw new Error("Tag must match package.json version");
 const dryRun = process.argv.includes("--dry-run");

@@ -16,8 +16,6 @@ target
 artifacts
 npm
 binding/*.node
-*.zim
-*.zim.tmp
 
 platform-licenses
 release

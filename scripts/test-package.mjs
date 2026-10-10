@@ -5,6 +5,7 @@ import { resolve } from "node:path";
 import { execaSync } from "execa";
 import { npm, root } from "./package-utils.mjs";
 import { runUpstreamTests } from "./upstream-tests.mjs";
+import { cjkPdf } from "../tests/fixtures.mjs";
 
 const suffix =
   process.argv[2] ??
@@ -69,6 +70,7 @@ try {
     [
       "exec",
       "tsc",
+      "--ignoreConfig",
       "--noEmit",
       "--strict",
       "--module",
@@ -77,6 +79,8 @@ try {
       "esnext",
       "--typeRoots",
       resolve(root, "node_modules/@types"),
+      "--types",
+      "node",
       ...typeFiles,
     ],
     { cwd: root, stdio: "inherit" },
@@ -89,6 +93,9 @@ try {
       poppler.pdfInfo(${JSON.stringify(fixture)}, { printAsJson: true }).then(info => {
         if (info.pages !== "16") throw Error("Invalid PDF metadata");
         if (!poppler.path.includes("napi-poppler-${suffix}")) throw Error("System utilities were used");
+      });
+      poppler.pdfToText(Buffer.from(${JSON.stringify(cjkPdf().toString("base64"))}, "base64")).then(text => {
+        if (text !== "日本") throw Error("Packaged CMap data was not loaded");
       });`;
     execaSync(process.execPath, [...(esm ? ["--input-type=module"] : []), "-e", code], {
       cwd: directory,
