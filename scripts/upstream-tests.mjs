@@ -57,13 +57,16 @@ export function runUpstreamTests(packageRoot = root, env = process.env) {
     `module.exports = require(${JSON.stringify(resolve(packageRoot, "compat/process.cjs"))});\n`,
   );
   const config = {
-    rootDir: root,
-    testMatch: ["<rootDir>/.upstream-tests/test/*.test.cjs"],
+    rootDir: resolve(root),
+    roots: [resolve(generated, "test")],
+    testMatch: ["**/*.test.cjs"],
     injectGlobals: false,
     testEnvironment: "node",
     testTimeout: 60000,
   };
-  execaSync("vp", ["exec", "jest", "--runInBand", "--config", JSON.stringify(config)], {
+  // A config file avoids shell escaping JSON and Windows path separators.
+  writeFileSync(resolve(generated, "jest.config.json"), JSON.stringify(config));
+  execaSync("vp", ["exec", "jest", "--runInBand", "--config", ".upstream-tests/jest.config.json"], {
     cwd: root,
     stdio: "inherit",
     env,
