@@ -5,6 +5,7 @@ export default defineConfig({
   test: { include: ["tests/*.test.ts"], testTimeout: 30000 },
   pack: [
     {
+      name: "api",
       entry: ["src/index.ts"],
       format: ["esm", "cjs"],
       fixedExtension: false,
@@ -13,6 +14,7 @@ export default defineConfig({
       exports: false,
     },
     {
+      name: "helpers",
       entry: ["src/helpers.ts"],
       format: "cjs",
       fixedExtension: false,
@@ -21,6 +23,7 @@ export default defineConfig({
       exports: false,
     },
     {
+      name: "publisher",
       entry: ["scripts/publish-release.mjs"],
       outDir: ".ci",
       format: "esm",

@@ -44,7 +44,7 @@
     "prepare": "vp config",
     "build:deps": "node scripts/build-deps.mjs",
     "build:native": "node scripts/build-native.mjs",
-    "build:js": "vp pack && node scripts/build-types.mjs",
+    "build:js": "vp pack --filter helpers && node scripts/build-types.mjs && vp pack --filter api --filter publisher --no-clean",
     "build": "vp run build:native && vp run build:js",
     "check": "vp check",
     "test": "vp test",
