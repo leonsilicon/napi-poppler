@@ -106,7 +106,7 @@ jobs:
         with:
           path: artifacts
       - run: node scripts/assemble-packages.mjs
-      - run: vp exec napi pre-publish --dry-run --root-publisher npm
+      - run: vp exec napi pre-publish --dry-run --root-publisher npm --no-gh-release --skip-optional-publish
       - run: node scripts/pack-release.mjs
       - uses: actions/upload-artifact@v4
         with:
