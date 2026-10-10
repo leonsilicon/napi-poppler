@@ -1,7 +1,7 @@
 import { cpSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { NapiCli } from "@napi-rs/cli";
-import { root } from "./package-utils.mjs";
+import { packageFiles, root } from "./package-utils.mjs";
 
 export const triplets = {
   "darwin-arm64": "arm64-osx",
@@ -35,8 +35,6 @@ const path = resolve(target, "package.json");
 const manifest = JSON.parse(readFileSync(path, "utf8"));
 manifest.files = [
   filename,
-  ...["bin", "licenses", "share"].flatMap((dir) =>
-    readdirSync(resolve(target, dir)).map((name) => `${dir}/${name}`),
-  ),
+  ...["bin", "licenses", "share"].flatMap((dir) => packageFiles(resolve(target, dir), dir)),
 ];
 writeFileSync(path, `${JSON.stringify(manifest, null, 2)}\n`);

@@ -1,6 +1,6 @@
 import { createBuildCommand, NapiCli } from "@napi-rs/cli";
 import { root } from "./package-utils.mjs";
-import { cpSync, existsSync, rmSync } from "node:fs";
+import { cpSync, existsSync, readdirSync, rmSync } from "node:fs";
 import { resolve } from "node:path";
 const options = createBuildCommand([
   "--platform",
@@ -27,6 +27,9 @@ if (!existsSync(tools)) throw new Error("Build bundled Poppler utilities first: 
 rmSync(resolve(root, "binding/bin"), { recursive: true, force: true });
 rmSync(resolve(root, "binding/share"), { recursive: true, force: true });
 cpSync(tools, resolve(root, "binding/bin"), { recursive: true });
+for (const name of readdirSync(resolve(root, "binding/bin"))) {
+  if (name.toLowerCase().endsWith(".pdb")) rmSync(resolve(root, "binding/bin", name));
+}
 cpSync(
   resolve(root, ".native/vcpkg/installed", triplet, "share/poppler"),
   resolve(root, "binding/share/poppler"),

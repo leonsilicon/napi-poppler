@@ -2,7 +2,7 @@ import { chmodSync, cpSync, readFileSync, readdirSync, writeFileSync } from "nod
 import { resolve } from "node:path";
 import { NapiCli } from "@napi-rs/cli";
 import { execaSync } from "execa";
-import { root } from "./package-utils.mjs";
+import { packageFiles, root } from "./package-utils.mjs";
 
 const artifacts = resolve(root, process.argv[2] ?? "artifacts");
 const directories = readdirSync(artifacts).filter((name) => name.startsWith("native-"));
@@ -35,9 +35,7 @@ for (const directory of directories) {
   const manifest = JSON.parse(readFileSync(path, "utf8"));
   manifest.files = [
     `napi-poppler.${suffix}.node`,
-    ...["bin", "licenses", "share"].flatMap((dir) =>
-      readdirSync(resolve(target, dir)).map((name) => `${dir}/${name}`),
-    ),
+    ...["bin", "licenses", "share"].flatMap((dir) => packageFiles(resolve(target, dir), dir)),
   ];
   writeFileSync(path, `${JSON.stringify(manifest, null, 2)}\n`);
 }
