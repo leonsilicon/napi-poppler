@@ -6,7 +6,7 @@ import { packageFiles, root } from "./package-utils.mjs";
 
 const artifacts = resolve(root, process.argv[2] ?? "artifacts");
 const directories = readdirSync(artifacts).filter((name) => name.startsWith("native-"));
-for (const name of ["index.cjs", "index.d.cts"]) {
+for (const name of ["index.js", "index.d.ts"]) {
   const expected = readFileSync(resolve(artifacts, directories[0], "binding", name));
   for (const directory of directories) {
     if (!expected.equals(readFileSync(resolve(artifacts, directory, "binding", name))))

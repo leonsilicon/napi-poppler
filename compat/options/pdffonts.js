@@ -11,8 +11,8 @@
  * @property {string} [userPassword] User password (for encrypted files).
  */
 
-/** @type {Record<keyof PdfFontsOptions, import("../index.cjs").OptionDetails>} */
-module.exports = {
+/** @type {Record<keyof PdfFontsOptions, import("../index.js").OptionDetails>} */
+export default {
 	firstPageToExamine: { arg: "-f", type: "number" },
 	lastPageToExamine: { arg: "-l", type: "number" },
 	listSubstitutes: { arg: "-subst", type: "boolean", minVersion: "0.19.0" },

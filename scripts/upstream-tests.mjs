@@ -2,10 +2,11 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { applyPatch } from "diff";
 import { execaSync } from "execa";
 import { root } from "./package-utils.mjs";
+import { adaptUpstreamToEsm } from "./upstream-esm.mjs";
 
 export function runUpstreamTests(packageRoot = root, env = process.env) {
   const pristine = resolve(root, "tests/upstream");
@@ -25,52 +26,55 @@ export function runUpstreamTests(packageRoot = root, env = process.env) {
     readFileSync(resolve(root, "patches/upstream-tests.diff"), "utf8"),
   );
   assert.ok(patched, "Upstream adaptation patch must apply cleanly");
-  // Only the subject and process mock seam may change. No assertions, test
-  // conditions, or fixtures may be altered, removed, skipped, or replaced.
-  assert.equal(
-    patched,
-    original
-      .replaceAll('"../src/index"', '"../src/index.cjs"')
-      .replace(
-        /(require|jest\.requireActual|jest\.doMock)\("node:child_process"/gu,
-        '$1("../src/process.cjs"',
-      ),
-  );
+  // Only ESM module loading and mocking may change. Assertions, test
+  // conditions, and fixtures remain protected by this reviewed translation.
+  assert.equal(patched, adaptUpstreamToEsm(original));
   const generated = resolve(root, ".upstream-tests");
   rmSync(generated, { recursive: true, force: true });
   mkdirSync(resolve(generated, "src"), { recursive: true });
   mkdirSync(resolve(generated, "test"), { recursive: true });
   cpSync(resolve(pristine, "fixtures"), resolve(generated, "test/fixtures"), { recursive: true });
-  writeFileSync(resolve(generated, "test/index.test.cjs"), patched);
+  writeFileSync(resolve(generated, "test/index.test.js"), patched);
   // Test the real compatibility facade and adapter from either the checkout
   // or an npm tarball installed with --ignore-scripts in a clean directory.
-  const facade = readFileSync(resolve(packageRoot, "compat/index.cjs"), "utf8").replace(
-    'require("../dist/helpers.cjs")',
-    `require(${JSON.stringify(resolve(packageRoot, "dist/helpers.cjs"))})`,
+  const facade = readFileSync(resolve(packageRoot, "compat/index.js"), "utf8").replace(
+    '"../dist/helpers.js"',
+    JSON.stringify(pathToFileURL(resolve(packageRoot, "dist/helpers.js")).href),
   );
-  writeFileSync(resolve(generated, "src/index.cjs"), facade);
+  writeFileSync(resolve(generated, "src/index.js"), facade);
   cpSync(resolve(packageRoot, "compat/options"), resolve(generated, "src/options"), {
     recursive: true,
   });
   writeFileSync(
-    resolve(generated, "src/process.cjs"),
-    `module.exports = require(${JSON.stringify(resolve(packageRoot, "compat/process.cjs"))});\n`,
+    resolve(generated, "src/process.js"),
+    `export * from ${JSON.stringify(pathToFileURL(resolve(packageRoot, "compat/process.js")).href)};\n`,
   );
   const config = {
     rootDir: resolve(root),
     roots: [resolve(generated, "test")],
-    testMatch: ["**/*.test.cjs"],
+    testMatch: ["**/*.test.js"],
+    transform: {},
     injectGlobals: false,
     testEnvironment: "node",
     testTimeout: 60000,
   };
   // A config file avoids shell escaping JSON and Windows path separators.
   writeFileSync(resolve(generated, "jest.config.json"), JSON.stringify(config));
-  execaSync("vp", ["exec", "jest", "--runInBand", "--config", ".upstream-tests/jest.config.json"], {
-    cwd: root,
-    stdio: "inherit",
-    env,
-  });
+  execaSync(
+    process.execPath,
+    [
+      "--experimental-vm-modules",
+      resolve(root, "node_modules/jest/bin/jest.js"),
+      "--runInBand",
+      "--config",
+      ".upstream-tests/jest.config.json",
+    ],
+    {
+      cwd: root,
+      stdio: "inherit",
+      env,
+    },
+  );
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url))

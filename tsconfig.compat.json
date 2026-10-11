@@ -7,6 +7,6 @@
     "outDir": ".types",
     "rootDir": "compat"
   },
-  "include": ["compat/index.cjs", "compat/options/*.cjs"],
+  "include": ["compat/index.js", "compat/options/*.js"],
   "exclude": []
 }

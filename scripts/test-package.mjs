@@ -3,7 +3,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "no
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { execaSync } from "execa";
-import { npm, root } from "./package-utils.mjs";
+import { npm, root, packageFiles } from "./package-utils.mjs";
 import { runUpstreamTests } from "./upstream-tests.mjs";
 import { cjkPdf } from "../tests/fixtures.mjs";
 
@@ -34,10 +34,20 @@ try {
   const manifest = JSON.parse(readFileSync(resolve(installed, "package.json"), "utf8"));
   assert.deepEqual(manifest.dependencies ?? {}, {});
   assert.deepEqual(manifest.exports["."], {
-    import: { types: "./dist/index.d.ts", default: "./dist/index.js" },
+    types: "./dist/index.d.ts",
+    default: "./dist/index.js",
   });
-  for (const name of ["index.cjs", "index.d.cts"])
+  for (const name of ["index.cjs", "index.d.cts", "helpers.cjs", "helpers.d.cts"])
     assert.equal(existsSync(resolve(installed, "dist", name)), false, `${name} must not ship`);
+  for (const file of packageFiles(installed, ".")) {
+    assert.ok(!/\.(?:cjs|cts)$/u.test(file), `${file} must be ESM`);
+    if (file.endsWith(".js"))
+      assert.doesNotMatch(
+        readFileSync(resolve(installed, file), "utf8"),
+        /\b(?:require)\s*\(|\bcreateRequire\b/u,
+        `${file} must use ESM imports`,
+      );
+  }
   const env = {
     ...process.env,
     LD_LIBRARY_PATH: "",
@@ -63,8 +73,11 @@ try {
     poppler.pdfToPs("input.pdf");
     poppler.pdfUnite(["first.pdf", "second.pdf"], "output.pdf");
     void text; void info;`;
-  const typeFile = resolve(directory, "consumer.mts");
-  writeFileSync(typeFile, consumer);
+  const typeFiles = ["consumer.mts", "consumer.cts"].map((name) => {
+    const path = resolve(directory, name);
+    writeFileSync(path, consumer);
+    return path;
+  });
   execaSync(
     "vp",
     [
@@ -81,17 +94,15 @@ try {
       resolve(root, "node_modules/@types"),
       "--types",
       "node",
-      typeFile,
+      ...typeFiles,
     ],
     { cwd: root, stdio: "inherit" },
   );
   // No PATH means neither system Poppler nor build tools can be discovered.
   const code = `import Poppler, { Poppler as Named } from "@leonsilicon/napi-poppler";
     import assert from "node:assert/strict";
-    import { createRequire } from "node:module";
-    const require = createRequire(import.meta.url);
-    assert.throws(() => require("@leonsilicon/napi-poppler"), { code: "ERR_PACKAGE_PATH_NOT_EXPORTED" });
-    assert.throws(() => require("@leonsilicon/napi-poppler/dist/index.js"), { code: "ERR_PACKAGE_PATH_NOT_EXPORTED" });
+    assert.ok(import.meta.resolve("@leonsilicon/napi-poppler").endsWith("/dist/index.js"));
+    await assert.rejects(import("@leonsilicon/napi-poppler/dist/index.js"), { code: "ERR_PACKAGE_PATH_NOT_EXPORTED" });
     assert.equal(Poppler, Named);
     const poppler = new Poppler();
     const info = await poppler.pdfInfo(${JSON.stringify(fixture)}, { printAsJson: true });
@@ -102,7 +113,7 @@ try {
   execaSync(process.execPath, ["--input-type=module", "-e", code], {
     cwd: directory,
     stdio: "inherit",
-    env: { ...env, PATH: "" },
+    env: { ...env, PATH: "", NAPI_RS_ENFORCE_VERSION_CHECK: "1" },
   });
 } finally {
   rmSync(directory, { recursive: true, force: true });

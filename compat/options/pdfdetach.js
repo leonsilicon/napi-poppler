@@ -23,8 +23,8 @@
  * @property {string} [userPassword] User password (for encrypted files).
  */
 
-/** @type {Record<keyof PdfDetachOptions, import("../index.cjs").OptionDetails>} */
-module.exports = {
+/** @type {Record<keyof PdfDetachOptions, import("../index.js").OptionDetails>} */
+export default {
 	listEmbedded: { arg: "-list", type: "boolean" },
 	outputEncoding: { arg: "-enc", type: "string" },
 	outputPath: { arg: "-o", type: "string" },

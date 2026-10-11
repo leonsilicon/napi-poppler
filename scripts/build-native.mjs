@@ -7,10 +7,9 @@ const options = createBuildCommand([
   "--release",
   "--output-dir",
   "binding",
-  "--js",
-  "index.cjs",
+  "--no-js",
   "--dts",
-  "index.d.cts",
+  "index.d.ts",
   ...process.argv.slice(2),
 ]).getOptions();
 const { task } = await new NapiCli().build({ ...options, cwd: root });

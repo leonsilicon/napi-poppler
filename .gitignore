@@ -25,7 +25,7 @@ release
 .upstream-tests
 
 .types
-compat/*.d.cts
-compat/options/*.d.cts
+compat/*.d.ts
+compat/options/*.d.ts
 binding/bin
 binding/share

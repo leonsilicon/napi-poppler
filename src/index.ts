@@ -1,4 +1,4 @@
-import { Poppler } from "../compat/index.cjs";
+import { Poppler } from "../compat/index.js";
 
 /** ESM API compatible with node-poppler 11.0.0. */
 export { Poppler };
@@ -20,4 +20,4 @@ export type {
   PdfToPsOptions,
   PdfToTextOptions,
   PdfUniteOptions,
-} from "../compat/index.cjs";
+} from "../compat/index.js";

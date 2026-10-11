@@ -31,8 +31,8 @@
  * @property {string} [userPassword] User password (for encrypted files).
  */
 
-/** @type {Record<keyof PdfInfoOptions, import("../index.cjs").OptionDetails>} */
-module.exports = {
+/** @type {Record<keyof PdfInfoOptions, import("../index.js").OptionDetails>} */
+export default {
 	firstPageToConvert: { arg: "-f", type: "number" },
 	lastPageToConvert: { arg: "-l", type: "number" },
 	listEncodingOptions: {

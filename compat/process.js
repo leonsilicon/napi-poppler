@@ -1,14 +1,14 @@
-"use strict";
-
 // A narrow process adapter for the upstream facade. Production execution goes
 // through napi-rs; keeping this seam separate also preserves upstream's mocks.
-const { EventEmitter } = require("node:events");
-const { existsSync } = require("node:fs");
-const { dirname, join } = require("node:path");
-const { platform, arch } = require("node:process");
-const { PassThrough, Writable } = require("node:stream");
-const { promisify } = require("node:util");
-const native = require("../binding/index.cjs");
+import { EventEmitter, once } from "node:events";
+import { existsSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { platform, arch } from "node:process";
+import { PassThrough, Writable } from "node:stream";
+import { promisify } from "node:util";
+import * as native from "../binding/index.js";
+import { buffer } from "node:stream/consumers";
+import { fileURLToPath } from "node:url";
 
 function bundledPath() {
   const suffix =
@@ -17,11 +17,13 @@ function bundledPath() {
       : platform === "win32"
         ? `win32-${arch}-msvc`
         : `darwin-${arch}`;
-  const local = join(__dirname, "../binding/bin");
+  const local = fileURLToPath(new URL("../binding/bin", import.meta.url));
   if (existsSync(join(local, platform === "win32" ? "pdfinfo.exe" : "pdfinfo"))) return local;
   try {
     return join(
-      dirname(require.resolve(`@leonsilicon/napi-poppler-${suffix}/package.json`)),
+      dirname(
+        fileURLToPath(import.meta.resolve(`@leonsilicon/napi-poppler-${suffix}/package.json`)),
+      ),
       "bin",
     );
   } catch {
@@ -135,8 +137,6 @@ function spawn(program, args, options = {}) {
 }
 
 async function execute(program, args, options = {}) {
-  const { once } = require("node:events");
-  const { buffer } = require("node:stream/consumers");
   const child = spawn(program, args, options);
   const [out, err, [code]] = await Promise.all([
     buffer(child.stdout),
@@ -165,4 +165,4 @@ function execFile(program, args, options, callback) {
   );
 }
 execFile[promisify.custom] = execute;
-module.exports = { spawn, spawnSync, execFile, bundledPath };
+export { spawn, spawnSync, execFile, bundledPath };

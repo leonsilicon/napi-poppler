@@ -9,7 +9,7 @@ export default defineConfig({
       entry: ["src/index.ts"],
       format: "esm",
       fixedExtension: false,
-      deps: { neverBundle: [/compat\/index\.cjs$/] },
+      deps: { neverBundle: [/compat\/index\.js$/] },
       dts: { tsgo: {} },
       exports: false,
     },
@@ -17,7 +17,7 @@ export default defineConfig({
       name: "helpers",
       entry: ["src/helpers.ts"],
       tsconfig: "tsconfig.helpers.json",
-      format: "cjs",
+      format: "esm",
       fixedExtension: false,
       deps: { alwaysBundle: [/.*/], onlyBundle: false, onlyImport: [] },
       dts: { tsgo: {} },
@@ -37,7 +37,7 @@ export default defineConfig({
   lint: {
     ignorePatterns: [
       "binding/**",
-      "compat/index.cjs",
+      "compat/index.js",
       "compat/options/**",
       "tests/upstream/**",
       ".upstream-tests/**",
@@ -52,7 +52,7 @@ export default defineConfig({
   fmt: {
     ignorePatterns: [
       "binding/**",
-      "compat/index.cjs",
+      "compat/index.js",
       "compat/options/**",
       "tests/upstream/**",
       ".upstream-tests/**",

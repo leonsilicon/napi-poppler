@@ -108,8 +108,8 @@
  * @property {string} [userPassword] User password (for encrypted files).
  */
 
-/** @type {Record<keyof PdfToPsOptions, import("../index.cjs").OptionDetails>} */
-module.exports = {
+/** @type {Record<keyof PdfToPsOptions, import("../index.js").OptionDetails>} */
+export default {
 	antialias: { arg: "-aaRaster", type: "string" },
 	binary: { arg: "-binary", type: "boolean" },
 	defaultCmykProfile: {

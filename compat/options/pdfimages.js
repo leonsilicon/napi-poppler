@@ -23,8 +23,8 @@
  * @property {string} [userPassword] Specify the user password for the PDF file.
  */
 
-/** @type {Record<keyof PdfImagesOptions, import("../index.cjs").OptionDetails>} */
-module.exports = {
+/** @type {Record<keyof PdfImagesOptions, import("../index.js").OptionDetails>} */
+export default {
 	allFiles: { arg: "-all", type: "boolean" },
 	ccittFile: { arg: "-ccitt", type: "boolean" },
 	firstPageToConvert: { arg: "-f", type: "number" },

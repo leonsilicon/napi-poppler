@@ -9,8 +9,8 @@
  * @property {boolean} [printVersionInfo] Print copyright and version info.
  */
 
-/** @type {Record<keyof PdfSeparateOptions, import("../index.cjs").OptionDetails>} */
-module.exports = {
+/** @type {Record<keyof PdfSeparateOptions, import("../index.js").OptionDetails>} */
+export default {
 	firstPageToExtract: { arg: "-f", type: "number", minVersion: "0.18.0" },
 	lastPageToExtract: { arg: "-l", type: "number", minVersion: "0.18.0" },
 	printVersionInfo: { arg: "-v", type: "boolean", minVersion: "0.18.0" },

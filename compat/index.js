@@ -1,16 +1,22 @@
-/* eslint-disable n/global-require -- Conditional requires. */
-"use strict";
-
-const { execFile, spawn, spawnSync } = require("./process.cjs");
-const { once } = require("node:events");
-const { basename, normalize, resolve: pathResolve } = require("node:path");
-const { platform } = require("node:process");
-const {
-	buffer: streamToBuffer,
-	text: streamToText,
-} = require("node:stream/consumers");
-const { promisify } = require("node:util");
-const { camelCase, freeze, lt } = require("../dist/helpers.cjs");
+import pdfattachOptions from "./options/pdfattach.js";
+import pdfdetachOptions from "./options/pdfdetach.js";
+import pdffontsOptions from "./options/pdffonts.js";
+import pdfimagesOptions from "./options/pdfimages.js";
+import pdfinfoOptions from "./options/pdfinfo.js";
+import pdfseparateOptions from "./options/pdfseparate.js";
+import pdftocairoOptions from "./options/pdftocairo.js";
+import pdftohtmlOptions from "./options/pdftohtml.js";
+import pdftoppmOptions from "./options/pdftoppm.js";
+import pdftopsOptions from "./options/pdftops.js";
+import pdftotextOptions from "./options/pdftotext.js";
+import pdfuniteOptions from "./options/pdfunite.js";
+import { execFile, spawn, spawnSync, bundledPath } from "./process.js";
+import { once } from "node:events";
+import { basename, normalize, resolve as pathResolve } from "node:path";
+import { platform } from "node:process";
+import { buffer as streamToBuffer, text as streamToText } from "node:stream/consumers";
+import { promisify } from "node:util";
+import { camelCase, freeze, lt } from "../dist/helpers.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -53,18 +59,18 @@ const PDF_INFO_PATH_REG = /(.+)pdfinfo/u;
 
 /**
  * @typedef {Record<string, OptionDetails>} PopplerAcceptedOptions
- * @typedef {import("./options/pdfattach.cjs").PdfAttachOptions} PdfAttachOptions
- * @typedef {import("./options/pdfdetach.cjs").PdfDetachOptions} PdfDetachOptions
- * @typedef {import("./options/pdfimages.cjs").PdfImagesOptions} PdfImagesOptions
- * @typedef {import("./options/pdffonts.cjs").PdfFontsOptions} PdfFontsOptions
- * @typedef {import("./options/pdfinfo.cjs").PdfInfoOptions} PdfInfoOptions
- * @typedef {import("./options/pdfseparate.cjs").PdfSeparateOptions} PdfSeparateOptions
- * @typedef {import("./options/pdftocairo.cjs").PdfToCairoOptions} PdfToCairoOptions
- * @typedef {import("./options/pdftohtml.cjs").PdfToHtmlOptions} PdfToHtmlOptions
- * @typedef {import("./options/pdftoppm.cjs").PdfToPpmOptions} PdfToPpmOptions
- * @typedef {import("./options/pdftops.cjs").PdfToPsOptions} PdfToPsOptions
- * @typedef {import("./options/pdftotext.cjs").PdfToTextOptions} PdfToTextOptions
- * @typedef {import("./options/pdfunite.cjs").PdfUniteOptions} PdfUniteOptions
+ * @typedef {import("./options/pdfattach.js").PdfAttachOptions} PdfAttachOptions
+ * @typedef {import("./options/pdfdetach.js").PdfDetachOptions} PdfDetachOptions
+ * @typedef {import("./options/pdfimages.js").PdfImagesOptions} PdfImagesOptions
+ * @typedef {import("./options/pdffonts.js").PdfFontsOptions} PdfFontsOptions
+ * @typedef {import("./options/pdfinfo.js").PdfInfoOptions} PdfInfoOptions
+ * @typedef {import("./options/pdfseparate.js").PdfSeparateOptions} PdfSeparateOptions
+ * @typedef {import("./options/pdftocairo.js").PdfToCairoOptions} PdfToCairoOptions
+ * @typedef {import("./options/pdftohtml.js").PdfToHtmlOptions} PdfToHtmlOptions
+ * @typedef {import("./options/pdftoppm.js").PdfToPpmOptions} PdfToPpmOptions
+ * @typedef {import("./options/pdftops.js").PdfToPsOptions} PdfToPsOptions
+ * @typedef {import("./options/pdftotext.js").PdfToTextOptions} PdfToTextOptions
+ * @typedef {import("./options/pdfunite.js").PdfUniteOptions} PdfUniteOptions
  * @typedef {(PdfAttachOptions|PdfDetachOptions|PdfFontsOptions|PdfImagesOptions|PdfInfoOptions|PdfSeparateOptions|PdfToCairoOptions|PdfToHtmlOptions|PdfToPpmOptions|PdfToPsOptions|PdfToTextOptions|PdfUniteOptions)} PopplerOptions
  */
 
@@ -271,7 +277,7 @@ class Poppler {
 			if (platform === "win32" && !popplerPath) {
 				try {
 					// @ts-ignore: Optional dependency
-					this.#popplerPath = require("node-poppler-win32");
+					this.#popplerPath = bundledPath();
 				} catch {
 					// Leave #popplerPath empty; the generic 'Unable to find ... binaries' error below will fire
 				}
@@ -339,73 +345,73 @@ class Poppler {
 				case "pdfAttach":
 					this.#acceptedOptions.set(
 						"pdfAttach",
-						freeze(require("./options/pdfattach.cjs"))
+						freeze(pdfattachOptions)
 					);
 					break;
 				case "pdfDetach":
 					this.#acceptedOptions.set(
 						"pdfDetach",
-						freeze(require("./options/pdfdetach.cjs"))
+						freeze(pdfdetachOptions)
 					);
 					break;
 				case "pdfFonts":
 					this.#acceptedOptions.set(
 						"pdfFonts",
-						freeze(require("./options/pdffonts.cjs"))
+						freeze(pdffontsOptions)
 					);
 					break;
 				case "pdfImages":
 					this.#acceptedOptions.set(
 						"pdfImages",
-						freeze(require("./options/pdfimages.cjs"))
+						freeze(pdfimagesOptions)
 					);
 					break;
 				case "pdfInfo":
 					this.#acceptedOptions.set(
 						"pdfInfo",
-						freeze(require("./options/pdfinfo.cjs"))
+						freeze(pdfinfoOptions)
 					);
 					break;
 				case "pdfSeparate":
 					this.#acceptedOptions.set(
 						"pdfSeparate",
-						freeze(require("./options/pdfseparate.cjs"))
+						freeze(pdfseparateOptions)
 					);
 					break;
 				case "pdfToCairo":
 					this.#acceptedOptions.set(
 						"pdfToCairo",
-						freeze(require("./options/pdftocairo.cjs"))
+						freeze(pdftocairoOptions)
 					);
 					break;
 				case "pdfToHtml":
 					this.#acceptedOptions.set(
 						"pdfToHtml",
-						freeze(require("./options/pdftohtml.cjs"))
+						freeze(pdftohtmlOptions)
 					);
 					break;
 				case "pdfToPpm":
 					this.#acceptedOptions.set(
 						"pdfToPpm",
-						freeze(require("./options/pdftoppm.cjs"))
+						freeze(pdftoppmOptions)
 					);
 					break;
 				case "pdfToPs":
 					this.#acceptedOptions.set(
 						"pdfToPs",
-						freeze(require("./options/pdftops.cjs"))
+						freeze(pdftopsOptions)
 					);
 					break;
 				case "pdfToText":
 					this.#acceptedOptions.set(
 						"pdfToText",
-						freeze(require("./options/pdftotext.cjs"))
+						freeze(pdftotextOptions)
 					);
 					break;
 				case "pdfUnite":
 					this.#acceptedOptions.set(
 						"pdfUnite",
-						freeze(require("./options/pdfunite.cjs"))
+						freeze(pdfuniteOptions)
 					);
 					break;
 			}
@@ -726,5 +732,5 @@ class Poppler {
 	}
 }
 
-module.exports.default = Poppler; // ESM default export
-module.exports.Poppler = Poppler; // TypeScript and named export
+export { Poppler };
+export default Poppler;

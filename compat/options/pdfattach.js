@@ -6,8 +6,8 @@
  * @property {boolean} [replace] Replace embedded file with same name (if it exists).
  */
 
-/** @type {Record<keyof PdfAttachOptions, import("../index.cjs").OptionDetails>} */
-module.exports = {
+/** @type {Record<keyof PdfAttachOptions, import("../index.js").OptionDetails>} */
+export default {
 	printVersionInfo: { arg: "-v", type: "boolean" },
 	replace: { arg: "-replace", type: "boolean" },
 };

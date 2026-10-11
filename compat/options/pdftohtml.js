@@ -32,8 +32,8 @@
  * @property {number} [zoom] Zoom the PDF document (default `1.5`).
  */
 
-/** @type {Record<keyof PdfToHtmlOptions, import("../index.cjs").OptionDetails>} */
-module.exports = {
+/** @type {Record<keyof PdfToHtmlOptions, import("../index.js").OptionDetails>} */
+export default {
 	complexOutput: { arg: "-c", type: "boolean" },
 	dataUrls: { arg: "-dataurls", type: "boolean", minVersion: "0.75.0" },
 	exchangePdfLinks: { arg: "-p", type: "boolean" },

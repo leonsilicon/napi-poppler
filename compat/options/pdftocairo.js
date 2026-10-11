@@ -97,8 +97,8 @@
  * @property {string} [userPassword] Specify the user password for the PDF file.
  */
 
-/** @type {Record<keyof PdfToCairoOptions, import("../index.cjs").OptionDetails>} */
-module.exports = {
+/** @type {Record<keyof PdfToCairoOptions, import("../index.js").OptionDetails>} */
+export default {
 	antialias: { arg: "-antialias", type: "string", minVersion: "0.44.0" },
 	cropBox: { arg: "-cropbox", type: "boolean", minVersion: "0.17.3" },
 	cropHeight: { arg: "-H", type: "number", minVersion: "0.17.3" },

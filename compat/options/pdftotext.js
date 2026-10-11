@@ -56,8 +56,8 @@
  * @property {string} [userPassword] User password (for encrypted files).
  */
 
-/** @type {Record<keyof PdfToTextOptions, import("../index.cjs").OptionDetails>} */
-module.exports = {
+/** @type {Record<keyof PdfToTextOptions, import("../index.js").OptionDetails>} */
+export default {
 	boundingBoxXhtml: { arg: "-bbox", type: "boolean", minVersion: "0.15.1" },
 	boundingBoxXhtmlLayout: {
 		arg: "-bbox-layout",

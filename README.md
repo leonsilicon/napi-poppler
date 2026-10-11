@@ -29,9 +29,12 @@ await poppler.pdfToCairo("document.pdf", "page", {
 });
 ```
 
-Version 0.2.0 is ESM-only. Use `import { Poppler }` or `import Poppler`;
+The public API is ESM-only. Use `import { Poppler }` or `import Poppler`;
 the package also exports the same option types as node-poppler.
-The CommonJS package entry point from 0.1.0 has been removed.
+On Node.js 22.12+ (or newer major versions), the CommonJS loader can also
+load the same synchronous ESM entry. No separate CommonJS API bundle is
+shipped. Version 0.2.1 fixes the import-only export map from 0.2.0 and migrates
+the compatibility facade, helpers, and native loader to ESM imports.
 
 ## Compatibility
 
@@ -126,10 +129,10 @@ dependencies. CI audits every executable and the addon for external libraries.
 The [entire upstream Jest suite](tests/upstream/README.md) is pinned at
 node-poppler 11.0.0, commit `43a97d7c5e8cf3c06189fd889989c16bdb9f7e1a`.
 Hashes protect all fixtures and tests. The reviewed adaptation changes only
-module paths and the process mock seam; every assertion and version condition
+module loading and the process mock seam for ESM; every assertion and version condition
 is retained. The suite runs again against clean packed npm installations,
-with ESM checks that remove PATH and verify that the CommonJS entry point is
-unavailable. Additional tests cover native inspection, input ownership, large concurrent pipes, cancellation,
+with ESM checks that remove PATH and type-check both ESM and CommonJS consumers.
+Additional tests cover native inspection, input ownership, large concurrent pipes, cancellation,
 missing executables, binary output, and Unicode paths.
 
 ## Releases

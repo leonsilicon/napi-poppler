@@ -10,7 +10,7 @@ copyright Frazer Smith, under MIT. Its complete license is in
 `compat/LICENSE` and `tests/upstream/LICENSE`.
 
 JavaScript helpers camelcase (MIT), ice-barrage (MIT), and semver (ISC) are
-bundled in `dist/helpers.cjs`. Each platform package includes a `licenses/`
+bundled in `dist/helpers.js`. Each platform package includes a `licenses/`
 directory containing the license notices provided by vcpkg for its native
 dependencies, including GLib, Cairo, Fontconfig, FreeType, libpng,
 libjpeg-turbo, OpenJPEG, TIFF, zlib, and their dependencies.

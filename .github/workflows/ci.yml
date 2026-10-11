@@ -87,8 +87,8 @@ jobs:
           name: native-${{ matrix.suffix }}
           path: |
             binding/napi-poppler.${{ matrix.suffix }}.node
-            binding/index.cjs
-            binding/index.d.cts
+            binding/index.js
+            binding/index.d.ts
             binding/bin/
             binding/share/
             platform-licenses/

@@ -1,14 +1,12 @@
 import { readFileSync, mkdtempSync, cpSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
-import { createRequire } from "node:module";
 import { afterEach, describe, expect, it } from "vite-plus/test";
 import Poppler, { Poppler as NamedPoppler, type PdfToTextOptions } from "../src/index.ts";
-import { inspectDocument, libraryVersion, NativeProcess } from "../binding/index.cjs";
+import { inspectDocument, libraryVersion, NativeProcess } from "../binding/index.js";
 import { cjkPdf } from "./fixtures.mjs";
 
-const require = createRequire(import.meta.url);
-const { spawn } = require("../compat/process.cjs");
+import { spawn } from "../compat/process.js";
 const fixture = resolve(import.meta.dirname, "upstream/fixtures/pdf_1.3_NHS_Constitution.pdf");
 const folders: string[] = [];
 

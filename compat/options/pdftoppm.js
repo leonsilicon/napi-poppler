@@ -78,8 +78,8 @@
  * @property {string} [userPassword] Specify the user password for the PDF file.
  */
 
-/** @type {Record<keyof PdfToPpmOptions, import("../index.cjs").OptionDetails>} */
-module.exports = {
+/** @type {Record<keyof PdfToPpmOptions, import("../index.js").OptionDetails>} */
+export default {
 	antialiasFonts: { arg: "-aa", type: "string" },
 	antialiasVectors: {
 		arg: "-aaVector",
