@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { execaSync } from "execa";
@@ -31,10 +31,13 @@ try {
     directory,
   );
   const installed = resolve(directory, "node_modules/@leonsilicon/napi-poppler");
-  assert.deepEqual(
-    JSON.parse(readFileSync(resolve(installed, "package.json"), "utf8")).dependencies ?? {},
-    {},
-  );
+  const manifest = JSON.parse(readFileSync(resolve(installed, "package.json"), "utf8"));
+  assert.deepEqual(manifest.dependencies ?? {}, {});
+  assert.deepEqual(manifest.exports["."], {
+    import: { types: "./dist/index.d.ts", default: "./dist/index.js" },
+  });
+  for (const name of ["index.cjs", "index.d.cts"])
+    assert.equal(existsSync(resolve(installed, "dist", name)), false, `${name} must not ship`);
   const env = {
     ...process.env,
     LD_LIBRARY_PATH: "",
@@ -60,11 +63,8 @@ try {
     poppler.pdfToPs("input.pdf");
     poppler.pdfUnite(["first.pdf", "second.pdf"], "output.pdf");
     void text; void info;`;
-  const typeFiles = ["consumer.mts", "consumer.cts"].map((name) => {
-    const path = resolve(directory, name);
-    writeFileSync(path, consumer);
-    return path;
-  });
+  const typeFile = resolve(directory, "consumer.mts");
+  writeFileSync(typeFile, consumer);
   execaSync(
     "vp",
     [
@@ -81,28 +81,29 @@ try {
       resolve(root, "node_modules/@types"),
       "--types",
       "node",
-      ...typeFiles,
+      typeFile,
     ],
     { cwd: root, stdio: "inherit" },
   );
-  for (const esm of [true, false]) {
-    // No PATH means neither system Poppler nor build tools can be discovered.
-    const code = `${esm ? 'import Poppler, { Poppler as Named } from "@leonsilicon/napi-poppler";' : 'const { default: Poppler, Poppler: Named } = require("@leonsilicon/napi-poppler");'}
-      if (Poppler !== Named) throw Error("Mismatched exports");
-      const poppler = new Poppler();
-      poppler.pdfInfo(${JSON.stringify(fixture)}, { printAsJson: true }).then(info => {
-        if (info.pages !== "16") throw Error("Invalid PDF metadata");
-        if (!poppler.path.includes("napi-poppler-${suffix}")) throw Error("System utilities were used");
-      });
-      poppler.pdfToText(Buffer.from(${JSON.stringify(cjkPdf().toString("base64"))}, "base64")).then(text => {
-        if (text !== "日本") throw Error("Packaged CMap data was not loaded");
-      });`;
-    execaSync(process.execPath, [...(esm ? ["--input-type=module"] : []), "-e", code], {
-      cwd: directory,
-      stdio: "inherit",
-      env: { ...env, PATH: "" },
-    });
-  }
+  // No PATH means neither system Poppler nor build tools can be discovered.
+  const code = `import Poppler, { Poppler as Named } from "@leonsilicon/napi-poppler";
+    import assert from "node:assert/strict";
+    import { createRequire } from "node:module";
+    const require = createRequire(import.meta.url);
+    assert.throws(() => require("@leonsilicon/napi-poppler"), { code: "ERR_PACKAGE_PATH_NOT_EXPORTED" });
+    assert.throws(() => require("@leonsilicon/napi-poppler/dist/index.js"), { code: "ERR_PACKAGE_PATH_NOT_EXPORTED" });
+    assert.equal(Poppler, Named);
+    const poppler = new Poppler();
+    const info = await poppler.pdfInfo(${JSON.stringify(fixture)}, { printAsJson: true });
+    assert.equal(info.pages, "16");
+    assert.ok(poppler.path.includes("napi-poppler-${suffix}"), "System utilities were used");
+    const text = await poppler.pdfToText(Buffer.from(${JSON.stringify(cjkPdf().toString("base64"))}, "base64"));
+    assert.equal(text, "日本", "Packaged CMap data was not loaded");`;
+  execaSync(process.execPath, ["--input-type=module", "-e", code], {
+    cwd: directory,
+    stdio: "inherit",
+    env: { ...env, PATH: "" },
+  });
 } finally {
   rmSync(directory, { recursive: true, force: true });
 }

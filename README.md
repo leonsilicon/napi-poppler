@@ -29,8 +29,9 @@ await poppler.pdfToCairo("document.pdf", "page", {
 });
 ```
 
-CommonJS: `const { Poppler } = require("@leonsilicon/napi-poppler")`. Both entry points
-export `Poppler` and `default`, plus the same option types as node-poppler.
+Version 0.2.0 is ESM-only. Use `import { Poppler }` or `import Poppler`;
+the package also exports the same option types as node-poppler.
+The CommonJS package entry point from 0.1.0 has been removed.
 
 ## Compatibility
 
@@ -127,8 +128,8 @@ node-poppler 11.0.0, commit `43a97d7c5e8cf3c06189fd889989c16bdb9f7e1a`.
 Hashes protect all fixtures and tests. The reviewed adaptation changes only
 module paths and the process mock seam; every assertion and version condition
 is retained. The suite runs again against clean packed npm installations,
-with separate ESM/CommonJS checks that remove PATH. Additional tests cover
-native inspection, input ownership, large concurrent pipes, cancellation,
+with ESM checks that remove PATH and verify that the CommonJS entry point is
+unavailable. Additional tests cover native inspection, input ownership, large concurrent pipes, cancellation,
 missing executables, binary output, and Unicode paths.
 
 ## Releases

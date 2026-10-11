@@ -7,7 +7,7 @@ export default defineConfig({
     {
       name: "api",
       entry: ["src/index.ts"],
-      format: ["esm", "cjs"],
+      format: "esm",
       fixedExtension: false,
       deps: { neverBundle: [/compat\/index\.cjs$/] },
       dts: { tsgo: {} },

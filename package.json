@@ -1,6 +1,6 @@
 {
   "name": "@leonsilicon/napi-poppler",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Async Node-API bindings to Poppler via poppler-rs, with bundled native dependencies",
   "homepage": "https://github.com/leonsilicon/napi-poppler#readme",
   "bugs": {
@@ -21,18 +21,13 @@
     "licenses"
   ],
   "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
       }
     },
     "./package.json": "./package.json"
@@ -70,10 +65,10 @@
     "vite-plus": "catalog:"
   },
   "optionalDependencies": {
-    "@leonsilicon/napi-poppler-darwin-arm64": "0.1.0",
-    "@leonsilicon/napi-poppler-linux-arm64-gnu": "0.1.0",
-    "@leonsilicon/napi-poppler-linux-x64-gnu": "0.1.0",
-    "@leonsilicon/napi-poppler-win32-x64-msvc": "0.1.0"
+    "@leonsilicon/napi-poppler-darwin-arm64": "0.2.0",
+    "@leonsilicon/napi-poppler-linux-arm64-gnu": "0.2.0",
+    "@leonsilicon/napi-poppler-linux-x64-gnu": "0.2.0",
+    "@leonsilicon/napi-poppler-win32-x64-msvc": "0.2.0"
   },
   "napi": {
     "binaryName": "napi-poppler",
